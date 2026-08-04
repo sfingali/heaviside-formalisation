@@ -5,7 +5,11 @@ A dossier-style formalisation of the equations of Oliver Heaviside (1850–1925)
 public domain.  Physics lives in the premises; the kernel checks the model's logic.
 Every theorem is kernel-verified (`#print axioms` = `[propext, Classical.choice, Quot.sound]` — no sorry, no axiom).
 
-**Status: T1–T8 complete (44 theorems, 8 files, `lake build` green). T9 in progress.**
+**Status: T1–T9 complete (51 theorems, 9 files, `lake build` green).**
+
+Build: `lake build MyProof.HeavisideTelegrapher` (and the sibling modules).  The
+O-Animator dependency files (`VectorCalculus`, `DistributionLaws`) are vendored in
+`MyProof/` so the repo is self-contained at the pinned mathlib.
 # Heaviside Formalisation Dossier
 
 Status 2026-08-01. Corpus: `/opt/data/home/projects/heaviside/papers/` (5 volumes, archive.org).

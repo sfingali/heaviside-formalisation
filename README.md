@@ -1,19 +1,8 @@
-# Heaviside in Lean — a kernel-verified formalisation corpus
-
-Lean 4.33.0-rc1 + mathlib pin `f4570dc2f3c801ed0c0edd5867f943e2b84e4dec`.
-A dossier-style formalisation of the equations of Oliver Heaviside (1850–1925),
-public domain.  Physics lives in the premises; the kernel checks the model's logic.
-Every theorem is kernel-verified (`#print axioms` = `[propext, Classical.choice, Quot.sound]` — no sorry, no axiom).
-
-**Status: T1–T9 complete (51 theorems, 9 files, `lake build` green).**
-
-Build: `lake build MyProof.HeavisideTelegrapher` (and the sibling modules).  The
-O-Animator dependency files (`VectorCalculus`, `DistributionLaws`) are vendored in
-`MyProof/` so the repo is self-contained at the pinned mathlib.
 # Heaviside Formalisation Dossier
 
-Status 2026-08-01. Corpus: `/opt/data/home/projects/heaviside/papers/` (5 volumes, archive.org).
-Env: `/opt/data/lean-demo` — Lean 4.28.0, mathlib `8f9d9cff` (same pin as O-Animator/Joshi).
+Status 2026-08-02. Corpus: `papers/` (5 volumes, archive.org, public domain).
+Env: Lean 4.33.0-rc1, mathlib pin `f4570dc2f3c801ed0c0edd5867f943e2b84e4dec` — carried in the
+repository's lakefile (the reproduction unit is the repo: lakefile + lean-toolchain + MyProof/).
 Method: per-claim kernel verification; physics in the premises, theorems about the model's logic;
 statements transcribed from the PDF pages, locators by print page.
 
@@ -43,9 +32,12 @@ potential-circuital, the gravitational speed μcv² = 1 ⟹ v = 1/√(μc) — b
 T8 COMPLETE (2026-08-01): `MyProof/HeavisideMass.lean` (118 lines, 3 theorems) —
 mass factor 1/√(1−β²) ≥ 1, strictly monotone in β, equatorial density ratio
 (1−β²)⁻³ — build 8701 jobs clean.
-T9 IN PROGRESS (2026-08-01): `MyProof/HeavisideFractional.lean` — heat kernel
-∂G/∂t = D·∂²G/∂x² (erfc absent from the pinned mathlib — the kernel is the honest core);
-NOT yet in the repository build.
+T9 COMPLETE (2026-08-02): `MyProof/HeavisideFractional.lean` (290 lines, 6 theorems) —
+the heat kernel ∂G/∂t = D·∂²G/∂x² (fundamental solution), the cable form ∂G/∂t =
+(1/KR)·∂²G/∂x², the unit-step derivative on both half-lines (the impulse is concentrated
+at the jump); erfc is absent from the pinned mathlib (probe-verified with positive
+control) so the kernel is the honest core — the erfc response is its accumulated
+profile; build 8699 jobs clean.
 Archived: the 8 compiling files above in the repo `heaviside-formalisation`.**
 
 The nine targets are the readings of "the Heaviside equations": T1–T4 the classical four
@@ -128,11 +120,16 @@ travel faster than at speed v" as a consequence).
    "1/p" — a steady e "beginning at the moment t = 0" (ET2 §282) is e·u(t), and the
    operational image of u is 1/p. ET3 §483: a charge Q passing the origin at t = 0 is
    "Q₀ = Q/p operationally expressed" — the travelling-charge bridge to T4.
-3. **The expansion theorem** (ET2 §282): θ = Z·e operational solution, e steady from t = 0;
-   "the C due to e is expressed by C = (Z₀/p)·e + Σ Zᵢ/(pᵢ·(dZ/dp)|ᵢ)·e^{pᵢt}·e" over the roots
-   pᵢ of Z(p) = 0. Algebraic core (rational Z = Q/P, distinct roots pᵢ, P(0) ≠ 0):
+3. **The expansion theorem** (ET2 §282, pp. 126–130): θ = Z·e operational solution, e steady
+   from t = 0; the current is C = θ/Z, and over the roots pᵢ of Z(p) = 0 Heaviside's form
+   is C = e/Z(0) + Σᵢ e·e^{pᵢt}/(pᵢ·Z′(pᵢ)) — the residue form (the displayed numerator is
+   the applied e, not Zᵢ; the steady term is e/Z(0)). Algebraic core (rational Z = Q/P,
+   distinct roots pᵢ, P(0) ≠ 0):
    `Q(p)/(p·P(p)) = Q(0)/(p·P(0)) + Σᵢ Q(pᵢ)/(pᵢ·P'(pᵢ)·(p − pᵢ))` — the partial-fraction
-   identity whose inverse image is the sum of normal modes.
+   identity whose inverse image is the sum of normal modes.  The identity requires the
+   proper-rational hypotheses: deg Q < deg P + 1 (no polynomial part) and pᵢ ≠ 0 alongside
+   P(0) ≠ 0 (the steady term's pole is simple).  The kernel-verified instance (quadratic
+   numerator, two nonzero poles) satisfies them.
 4. Normal-mode integration: the image of (p − pᵢ)⁻¹ is e^{pᵢt}·(unit step); image of p⁻¹ is
    the unit step — the "operational ↔ function" correspondence.
 
@@ -270,12 +267,20 @@ strength of the impulse for the intensity"); ET3 §483 (Q₀ = Q/p).
 **Statement:** (a) p^½ in the operational calculus — the diffusive (cable) equation
 ∂V/∂t = (1/KR)·∂²V/∂x² solves with the complementary error function, erfc — Heaviside's
 fractional operator p^½ = d^½/dt^½ acting on the cable response; (b) the impulse function
-obtained by differentiating the unit step u′(t) — the δ function a quarter-century before
-Dirac; the operational identity p·u = δ ("p·1 = impulse").
+obtained by differentiating the unit step u′(t) — the δ function, three decades before
+Dirac (ET2 §274–278 is 1893–95; Dirac 1926–27; the impulse had Kirchhoff/Cauchy
+antecedents); the operational identity p·u = δ ("p·1 = impulse").
 
-**Formalisation plan:** (a) the honest kernel-verifiable core: the diffusion equation and
-the erfc solution — ∂/∂t (erfc(x/(2√(D·t)))) = D·∂²/∂x² (erfc), with Real.erfc in the pin —
-a genuine calculus theorem (the derivative-chain discipline already banked); (b) the
+**Formalisation plan (as executed):** (a) the kernel-verified core is the heat kernel
+G = exp(−x²/4Dt)/(2√(πDt)) with ∂G/∂t = D·∂²G/∂x² — the pinned mathlib has NO erfc
+(probe-verified: positive control `Real.sqrt` resolves; `Real.erfc`, `Real.erf`,
+`Gaussian`, `pdfNormal`, `Real.gaussian` all unknown; file-level search of `Mathlib/`
+finds no erfc; the Gaussian density `gaussianPDFReal` in
+`Probability/Distributions/Gaussian/Real.lean` exists but no CDF/erfc is defined on it).
+The cable response erfc(x/(2√(Dt))) is the accumulated kernel profile (the x-antiderivative
+of a heat-equation solution is again a heat-equation solution).  The correspondence is
+NOT "p^½ ↦ erfc": the erfc is the operational image of e^{−x√(pRK)}/p — the
+exponential-of-the-half-power, not of p^½ itself; (b) the
 impulse as the distributional derivative of the step: ⟨u′, f⟩ = −⟨u, f′⟩ = f(0) = ⟨δ, f⟩
 via the δ-adjoint in `DistributionLaws.lean` (T3's cross-link, now made explicit);
 (c) the operational bridge p^½ ↦ erfc documented as the correspondence rule (the Laplace
@@ -301,3 +306,67 @@ Cross-links to existing corpus: `DistributionLaws.lean` (δ-adjoint for u′ = �
 `VectorCalculus.lean` (V3, curl/grad/div premises), `MultipoleSymmetry.lean`
 (BAC−CAB triple product), `PoyntingFlux.lean` (energy flux — T5's starting point),
 `NeumannDebye.lean` (Helmholtz premise pattern), `KnotField.lean` (div-curl-consistency).
+
+
+---
+
+## Weight classes and verification gates
+
+**Weight-class tagging** (51 theorems; (a) definition/restatement, (b) algebra/calculus
+identity, (c) derivation from premises):
+
+- **(a) 3** — `unitStep_pos`, `unitStep_neg`, `unitStep_add_neg` (indicator evaluations).
+- **(b) 25** — T1 `distortionless_factorisation`, `distortionless_finite_speed`; T3
+  `expansion_two_pole_const`, `expansion_two_pole_poly2`; T4 `field_perpendicular`,
+  `field_axial`, `field_equatorial`, `equatorial_over_axial`, `equatorial_ratio_ge_one`,
+  `flattening_ge_one`, `speed_condition`, `cone_angle`; T7 `sqrt_sq`, `gamma_sq`, `z0_sq`,
+  `z0_ratio_sq`, `impedance_ratio_consistency`, `distortionless_square`, `phase_velocity`;
+  T5 `flux_perp_E`, `flux_perp_H`; T8 `mass_factor_ge_one`, `mass_factor_mono`,
+  `equatorial_density_ratio`; T9 `cable_equation` (instantiation).
+- **(c) 23** — T1 `telegrapher_second_order_V`, `distortionless_wave_solution`; T2 all six
+  (`current_circuital`, `potential_is_circuital`, `total_current_circuital`,
+  `continuity_from_circuital`, `free_wave_equation`, `induction_circuital_of_continuity`);
+  T3 `exp_solves_ode`; T4 `moving_charge_induction_circuital`; T5 `flux_divergence`,
+  `poynting_balance`; T6 all five; T9 `heat_kernel_x_deriv`, `heat_kernel_xx_deriv`,
+  `heat_kernel_heat_equation`, `deriv_unitStep_pos`, `deriv_unitStep_neg`.
+
+**Consistency witnesses (vacuity gate).** Every premise bundle is premise-structured, so a
+contradictory bundle would prove everything while the build stays green.  Gate: a concrete
+instantiation per bundle — T1/T7 the distortionless line (R = 1, L = 2, S = 3, K = 6 with
+RK = LS, and F = exp as the smooth profile); T4 the explicit ellipsoid field with concrete
+numbers (r = 1, u = 1, v = 2); T2/T5 zero-field and the plane-wave profile (the premises
+are the curl pair — any differentiable field pair instantiates them); T3 the concrete
+rational Q/P with the two nonzero poles; T8 the concrete β = 1/2; T9 the kernel with
+D = 1, x = 1, t = 1.  Compiling witnesses certify satisfiability of the bundles used.
+A `Witnesses.lean` file with these instantiations is the planned next addition.
+
+**Non-triviality spot-checks.**  Deleting a physics premise breaks the proof: dropping
+`hRK` (the distortionless condition) from `distortionless_factorisation`, dropping `hampere`
+from `free_wave_equation`, or dropping `hβ` from `speed_condition` each leaves the goal
+unprovable — the premises are load-bearing, not decorative.
+
+**Notation table** (the corpus's symbols; Heaviside's own letters):
+
+| symbol | meaning | used in |
+|---|---|---|
+| V, I | voltage, current on the line | T1, T7 |
+| R | resistance per unit length | T1, T7, T9 |
+| L | inductance per unit length | T1, T7 |
+| S | leakage (conductance) per unit length | T1 |
+| K | capacitance per unit length | T1, T9 |
+| G, C | conductance, capacitance (T7's line constants — collision with T2's C = conduction current, flagged) | T7 |
+| c | permittivity (Heaviside's letter) | T2, T4, T5, T6 |
+| μ | inductivity | T2, T4, T6 |
+| p | the operational d/dt | T3, T9 |
+| u(t) | the unit step | T3, T9 |
+| γ, Z₀ | propagation constant, characteristic impedance | T7 |
+| D | diffusivity 1/(KR) | T9 |
+| G (T6) | Newton's constant — the gravitational analogue's coefficient | T6 |
+
+**Conventions flagged by review.**  T6 formalises Heaviside's 1893 analogy, NOT
+linearised-GR gravitoelectromagnetism — the gravitomagnetic normalisation differs by
+convention from Lense–Thirring, and μ, c are reused as the gravitational analogues.
+T4's `cone_angle` is the geometry only (the angle exists iff u > v); the confinement
+claim itself (the disturbance sits behind the cone) is physical, not asserted.
+T5's flux is Heaviside's VEH = E×H — V is the quaternion vector-part operator, not a
+voltage field (the "V×H" reading collides with T1's V).

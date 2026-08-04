@@ -35,6 +35,8 @@ documented statements carry the attribution):
 
 namespace HeavisideMass
 
+open scoped Topology
+open Filter
 open OAnimatorVector
 open HeavisideMovingCharge
 

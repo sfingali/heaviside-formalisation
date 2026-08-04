@@ -19,9 +19,9 @@ jobs:
         run: |
           lake exe cache get || { echo "MATHLIB CACHE MISS"; exit 1; }
 
-      - name: Build
+      - name: Build (explicit target — the bare lake build has no default target here)
         run: |
-          lake build
+          lake build MyProof.Axioms
 
       - name: 'Axioms check (every theorem: standard trio only)'
         run: |

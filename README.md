@@ -44,7 +44,7 @@ the heat kernel ∂G/∂t = D·∂²G/∂x² (fundamental solution), the cable f
 at the jump); erfc is absent from the pinned mathlib (probe-verified with positive
 control) so the kernel is the honest core — the erfc response is its accumulated
 profile; build 8699 jobs clean.
-Archived: the 8 compiling files above in the repo `heaviside-formalisation`.**
+Archived: the 9 compiling Heaviside modules (+ `Axioms.lean`) in the repo `heaviside-formalisation`.**
 
 The nine targets are the readings of "the Heaviside equations": T1–T4 the classical four
 (telegrapher, 4-vector field, operational calculus, moving charge), T5–T9 the added set
@@ -103,7 +103,7 @@ T1.5 needs the chain rule twice — the derivative-chain discipline already bank
 corpus, the curl/div differential identities are explicit premises (HcurlGrad, HdivCross etc.
 — mathlib has no curl). Theorems:
 - the two curl equations as definitions; `div (curl H) = div J = 0` (total current is circuital)
-- free-space wave equation: from the curl pair + div E = 0, `∇²E = με·∂²E/∂t²` via the
+- free-space wave equation: from the curl pair + div E = 0, `∇²E = μc·∂²E/∂t²` via the
   curl-curl = grad-div − ∇² identity (premise-structured, like KnotField/NeumannDebye)
 - the circuital induction statement: B solenoidal ⟹ B = curl A (Helmholtz, premise)
 - the three-laws consistency test as a theorem about the moving-charge field (bridges T2/T4)
@@ -133,8 +133,9 @@ travel faster than at speed v" as a consequence).
    distinct roots pᵢ, P(0) ≠ 0):
    `Q(p)/(p·P(p)) = Q(0)/(p·P(0)) + Σᵢ Q(pᵢ)/(pᵢ·P'(pᵢ)·(p − pᵢ))` — the partial-fraction
    identity whose inverse image is the sum of normal modes.  The identity requires the
-   proper-rational hypotheses: deg Q < deg P + 1 (no polynomial part) and pᵢ ≠ 0 alongside
-   P(0) ≠ 0 (the steady term's pole is simple).  The kernel-verified instance (quadratic
+   proper-rational hypotheses: deg Q < deg P + 1 (no polynomial part) and P(0) ≠ 0 (which
+   already forces every root pᵢ ≠ 0 — the roots divide P, so a zero root would give
+   P(0) = 0).  The kernel-verified instance (quadratic
    numerator, two nonzero poles) satisfies them.
 4. Normal-mode integration: the image of (p − pᵢ)⁻¹ is e^{pᵢt}·(unit step); image of p⁻¹ is
    the unit step — the "operational ↔ function" correspondence.
@@ -161,13 +162,13 @@ decomposition likely needs proving or premise-structuring). Laplace — absent (
 companion paper "On the Electromagnetic Effects due to the Motion of Electrification through
 a Dielectric" (Phil. Mag. April 1889). Formula page: EP2 p. 495.
 
-**Statements (EP2 p. 495, rationalised units; axis of z the motion line, charge q at speed u):**
+**Statements (EP2 p. 495, unrationalised; axis of z the motion line, charge q at speed u):**
 1. (A) Electric force, radial from the charge, with c = permittivity:
    cE = q·(1 − u²/v²) / (r²·(1 − u²sin²θ/v²)^(3/2)) — the **Heaviside ellipsoid**:
    field lines stay straight (radial), compressed along the motion.
 2. (B) Magnetic force: H = c·E·u·sinθ — circles about the axis; "The two forces are
    perpendicular" (E·H = 0).
-3. Speed condition: μcv² = 1, i.e. v = 1/√(με) — the propagation speed of the medium.
+3. Speed condition: μcv² = 1, i.e. v = 1/√(μc) — the propagation speed of the medium.
 4. The three laws test: (A), (B) satisfy Faraday, Maxwell/Ampere, continuity (EP2 p. 495).
 5. Small-speed limit: J.J. Thomson's solution — uniform radial displacement, magnetic field
    of a current-element of moment qu.
@@ -199,7 +200,8 @@ Poynting and myself" — the V×H flux); the 1884–85 *Electrician* papers "The
 Current" (EP1).
 
 **Statement:** the energy flux across unit area is the vector product of the electric and
-magnetic forces, W = V×H (Heaviside's notation; S = E×H in modern). Heaviside derived it
+magnetic forces, W = VEH = E×H (V is Heaviside's quaternion vector-part operator — NOT a
+voltage field; the "V×H" reading collides with T1's V; S = E×H in modern). Heaviside derived it
 independently of Poynting (1884–85, published in his 1885–87 series; Poynting 1884 Phil.
 Trans. Pt. 2). Energy balance: −∂(energy density)/∂t = div(E×H) + J·E (flux out + work on
 matter).
@@ -212,7 +214,7 @@ energy-density definition.
 
 ## T6 — Gravitoelectromagnetism (1893)
 
-**Sources:** ET1 Ch. IX "A Gravitational and Electromagnetic Analogy" (1893; TOC djvu 1434,
+**Sources:** ET1 Appendix B "A Gravitational and Electromagnetic Analogy" (1893; TOC djvu 1434,
 pp. 455–466 area). The most self-contained item on the list: a genuine standalone system.
 
 **Statement:** the Maxwell-analogue for gravity. In Heaviside's analogy the gravitational
@@ -261,7 +263,7 @@ contested in the secondary literature: Kaufmann's ψ(β) = g(β)/β² writes it 
 introduced precisely as the correction to Searle's field-energy formula — checked against
 the primary sources before the label hardens (see the status block).
 
-**Formalised:** `searleCoefficient` (the g-bracket, named with the contestable-attribution
+**Formalised:** `excessEnergyCoefficient` (the g-bracket, named with the contestable-attribution
 flag), `movingEnergyRatio` (the excess-energy statement), `equatorial_density_ratio` — the
 (1−β²)⁻³ density concentration from the T4 field (the theorem), and `MomentumAlongMotion`
 (the momentum-direction statement).  The small-speed limit lim g(β)/β² = 4/3 is the
@@ -287,8 +289,10 @@ G = exp(−x²/4Dt)/(2√(πDt)) with ∂G/∂t = D·∂²G/∂x² — the pinne
 `Gaussian`, `pdfNormal`, `Real.gaussian` all unknown; file-level search of `Mathlib/`
 finds no erfc; the Gaussian density `gaussianPDFReal` in
 `Probability/Distributions/Gaussian/Real.lean` exists but no CDF/erfc is defined on it).
-The cable response erfc(x/(2√(Dt))) is the accumulated kernel profile (the x-antiderivative
-of a heat-equation solution is again a heat-equation solution).  The correspondence is
+The cable response erfc(x/(2√(Dt))) is the accumulated kernel profile (an x-antiderivative
+v(x,t) = ∫_{x₀}^x u(s,t) ds of a heat-equation solution satisfies the same equation —
+premise-structured via the FTC and the switching of the t-derivative under the integral).
+The correspondence is
 NOT "p^½ ↦ erfc": the erfc is the operational image of e^{−x√(pRK)}/p — the
 exponential-of-the-half-power, not of p^½ itself; (b) the
 impulse as the distributional derivative of the step: ⟨u′, f⟩ = −⟨u, f′⟩ = f(0) = ⟨δ, f⟩
@@ -335,6 +339,13 @@ identity, (c) derivation from premises):
   `poynting_balance`; T6 all five; T9 `heat_kernel_x_deriv`, `heat_kernel_xx_deriv`,
   `heat_kernel_heat_equation`, `deriv_unitStep_pos`, `deriv_unitStep_neg`.
 
+**Axiom-check provenance.**  The standing `axioms = [propext, Classical.choice,
+Quot.sound]` property has been checked theorem-by-theorem since T1, but the
+comprehensive machine gate (all 50 in one file, failing the CI on any drift) dates
+from the CI commit (2026-08-04) — `MyProof/Axioms.lean`, gated in `.github/workflows/build.yml`.
+Earlier rounds' checks were per-file spot checks; the gate is the standing property's
+enforcement from that commit on.
+
 **Consistency witnesses (vacuity gate).** Every premise bundle is premise-structured, so a
 contradictory bundle would prove everything while the build stays green.  Gate: a concrete
 instantiation per bundle — T1/T7 the distortionless line (R = 1, L = 2, S = 3, K = 6 with
@@ -347,8 +358,9 @@ A `Witnesses.lean` file with these instantiations is the planned next addition.
 
 **Non-triviality spot-checks.**  Deleting a physics premise breaks the proof: dropping
 `hRK` (the distortionless condition) from `distortionless_factorisation`, dropping `hampere`
-from `free_wave_equation`, or dropping `hβ` from `speed_condition` each leaves the goal
-unprovable — the premises are load-bearing, not decorative.
+from `free_wave_equation`, or dropping `hβ` from `speed_condition` each breaks the proof — the premises are load-bearing, not decorative (a broken
+proof is evidence of dependence, not a counter-model; the Witnesses.lean plan
+includes the pointed-the-other-way instantiations).
 
 **Notation table** (the corpus's symbols; Heaviside's own letters):
 

@@ -22,7 +22,7 @@ whose small-speed expansion carries the classic 4/3-type coefficient.
 Formalised here (the honest kernel-verified core — the field-energy integral and the
 log-expansion are analysis lifts, so the coefficient is the definition and the
 documented statements carry the attribution):
-  1. `searleCoefficient` — the β-dependence of the moving sphere's field energy.
+  1. `excessEnergyCoefficient` — the β-dependence of the moving sphere's field energy (g-bracket, neutral name; the Abraham/Kaufmann/Searle attribution lives in the docstring).
   2. `movingEnergyRatio` — the statement of the energy growth (the integral origin
      documented; the coefficient's role kernel-defined).
   3. `equatorial_density_ratio` — from the T4 field: the energy density broadside
@@ -38,20 +38,23 @@ namespace HeavisideMass
 open OAnimatorVector
 open HeavisideMovingCharge
 
-/-- The Searle energy coefficient (Searle 1897, completing Heaviside's 1889 program):
-    the β-dependence of the moving sphere's field energy,
-    g(β) = (1+β²)/(2β)·ln((1+β)/(1−β)) − 1, with W(β) = W₀·g(β) for the rest energy
-    W₀ = q²/(8πε₀a).  The small-speed expansion is g(β) = (4/3)β² + O(β⁴) — the
-    classic velocity-dependent mass coefficient; NOT the γ of Lorentz's deformable
-    electron.  (The log-expansion limit is a documented analysis lift.) -/
-noncomputable def searleCoefficient (β : ℝ) : ℝ :=
+/-- The excess-energy coefficient of the moving sphere's field (the g-bracket):
+    g(β) = (1+β²)/(2β)·ln((1+β)/(1−β)) − 1, with W(β) = W₀·(1 + g(β)) for the rest
+    energy W₀ — g(0) = 0, so g is the EXCESS over the rest energy, not the total.
+    The small-speed expansion is g(β) = (4/3)β² + O(β⁴) — the classic velocity-
+    dependent mass coefficient; NOT the γ of Lorentz's deformable electron (γ is
+    Heaviside's equatorial FIELD enhancement, T4).  Attribution is contested in the
+    secondary literature: Kaufmann's ψ(β) = g(β)/β² writes the bracket as Abraham's,
+    introduced as the correction to Searle's field-energy formula — the name here is
+    deliberately neutral.  (The log-expansion limit is a documented analysis lift.) -/
+noncomputable def excessEnergyCoefficient (β : ℝ) : ℝ :=
   (1 + β ^ 2) / (2 * β) * Real.log ((1 + β) / (1 - β)) - 1
 
 /-- The energy growth statement of the moving charge:  W(β) = W₀·g(β) with g the
     Searle coefficient — the field energy of the moving electrification (the
     integral over all space of the T4 field energy is the documented origin). -/
 noncomputable def movingEnergyRatio (β : ℝ) : ℝ :=
-  searleCoefficient β
+  excessEnergyCoefficient β
 
 /-- The energy-density concentration: from the T4 field, the equatorial energy
     density exceeds the axial by the factor (1 − β²)⁻³ — the field energy piles up

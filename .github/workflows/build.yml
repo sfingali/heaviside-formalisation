@@ -33,6 +33,16 @@ jobs:
 
       - name: Theorem count into step summary
         run: |
-          n=$(grep -hc '^theorem ' MyProof/Heaviside*.lean | paste -sd+ | bc)
+          n=$(grep -c '#print axioms' MyProof/Axioms.lean)
           echo "theorems=$n" >> $GITHUB_STEP_SUMMARY
           echo "modules: $(ls MyProof/Heaviside*.lean | wc -l) Heaviside modules + $(ls MyProof | grep -v '^Heaviside' | grep -v Axioms | tr '\n' ' ')" >> $GITHUB_STEP_SUMMARY
+
+      - name: Build dossier PDF from the README (single source)
+        run: |
+          pip install --quiet weasyprint
+          pandoc README.md -o heaviside-dossier.pdf --pdf-engine=weasyprint
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: heaviside-dossier
+          path: heaviside-dossier.pdf

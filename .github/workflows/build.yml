@@ -1,0 +1,32 @@
+name: build
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan + toolchain from lean-toolchain
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -o elan-init.sh
+          sh elan-init.sh -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+      - name: Build (fresh checkout — MyProof oleans always compile in this job)
+        run: |
+          lake build
+
+      - name: Axioms check (every theorem: standard trio only)
+        run: |
+          lake env lean MyProof/Axioms.lean 2>&1 | tee /tmp/ax.log
+          # any "depends on axioms" line that is NOT exactly the standard trio fails the job
+          grep "depends on axioms" /tmp/ax.log | grep -v "\[propext, Classical.choice, Quot.sound\]" && { echo "AXIOM DRIFT"; exit 1; } || true
+
+      - name: Theorem count into step summary
+        run: |
+          n=$(grep -hc '^theorem ' MyProof/Heaviside*.lean | paste -sd+ | bc)
+          echo "theorems=$n" >> $GITHUB_STEP_SUMMARY
+          echo "files: $(ls MyProof/Heaviside*.lean | wc -l) Heaviside modules + $(ls MyProof/ | grep -v Heaviside | tr '\n' ' ')" >> $GITHUB_STEP_SUMMARY

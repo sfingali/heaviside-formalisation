@@ -190,4 +190,47 @@ theorem moving_charge_induction_circuital (A B : V3 → V3)
     Circuital B :=
   potential_is_circuital A B h hdc
 
+
+/-- The equatorial field enhancement of the moving charge (Heaviside 1889): the
+    broadside field exceeds its rest value by the factor 1/√(1 − β²) = γ.  This is a
+    FIELD-enhancement factor — the γ-shaped MASS formula is Lorentz's later
+    deformable electron (1899/1904), NOT Heaviside's; the field energy of Heaviside's
+    moving charge is the Searle coefficient (T8). -/
+noncomputable def enhancementFactor (β : ℝ) : ℝ :=
+  1 / Real.sqrt (1 - β ^ 2)
+
+/-- The enhancement factor ≥ 1 for subluminal motion: the broadside field grows
+    with speed (the flattening of T4's field lines). -/
+theorem enhancement_ge_one (β : ℝ) (hβ0 : 0 ≤ β ^ 2) (hβ1 : β ^ 2 < 1) :
+    1 ≤ enhancementFactor β := by
+  unfold enhancementFactor
+  have ha : 0 < 1 - β ^ 2 := sub_pos.mpr hβ1
+  have ha1 : 1 - β ^ 2 ≤ 1 := sub_le_self (1 : ℝ) hβ0
+  have hsq : Real.sqrt (1 - β ^ 2) ≤ 1 := by
+    simpa using (Real.sqrt_le_sqrt ha1)
+  have hpos : 0 < Real.sqrt (1 - β ^ 2) := Real.sqrt_pos.2 ha
+  simpa using ((one_le_inv₀ hpos).2 hsq)
+
+/-- The enhancement factor strictly increases with speed: for 0 ≤ β₁ < β₂ < 1,
+    1/√(1 − β₁²) < 1/√(1 − β₂²) — the faster the charge, the stronger the broadside
+    field. -/
+theorem enhancement_mono (β₁ β₂ : ℝ) (h₁0 : 0 ≤ β₁) (h₁₂ : β₁ < β₂) (h₂1 : β₂ < 1) :
+    enhancementFactor β₁ < enhancementFactor β₂ := by
+  unfold enhancementFactor
+  have h₂0 : 0 ≤ β₂ := le_trans h₁0 (le_of_lt h₁₂)
+  have hsq1 : 0 < 1 - β₁ ^ 2 := by
+    nlinarith [sq_nonneg β₁]
+  have hsq2 : 0 < 1 - β₂ ^ 2 := by
+    have hb2 : β₂ ^ 2 < 1 := by
+      nlinarith [h₂0, h₂1]
+    exact sub_pos.mpr hb2
+  have h12 : 1 - β₂ ^ 2 < 1 - β₁ ^ 2 := by
+    have hb : β₁ ^ 2 < β₂ ^ 2 := by nlinarith [h₁0, h₁₂]
+    nlinarith [hb]
+  have hsqrt : Real.sqrt (1 - β₂ ^ 2) < Real.sqrt (1 - β₁ ^ 2) :=
+    Real.sqrt_lt_sqrt hsq2.le h12
+  have hpos1 : 0 < Real.sqrt (1 - β₁ ^ 2) := Real.sqrt_pos.2 hsq1
+  have hpos2 : 0 < Real.sqrt (1 - β₂ ^ 2) := Real.sqrt_pos.2 hsq2
+  simpa using ((inv_lt_inv₀ hpos1 hpos2).2 hsqrt)
+
 end HeavisideMovingCharge

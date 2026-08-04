@@ -15,7 +15,8 @@ T3 COMPLETE (2026-08-01): `MyProof/HeavisideOperational.lean` (128 lines, 6 theo
 unit step via Set.indicator (pos/neg/switching-pair), the expansion-theorem partial fractions
 (two-pole unit response + quadratic numerator, kernel-verified by field_simp/ring),
 exp_solves_ode (the normal-mode correspondence) — build 8697 jobs clean.
-T4 COMPLETE (2026-08-01): `MyProof/HeavisideMovingCharge.lean` (193 lines, 9 theorems) —
+T4 COMPLETE (2026-08-02): `MyProof/HeavisideMovingCharge.lean` (250 lines, 11 theorems) —
+the enhancement-factor lemmas added (γ = 1/√(1−β²) as Heaviside's field enhancement);
 the spherical frame, (A)/(B) magnitudes, E·H = 0 perpendicularity, axial/equatorial closed
 forms + ratio, flattening factor ≥ 1, μcv² = 1 speed condition, the superluminal cone
 θ = arcsin(v/u), the circuital-flux bridge to T2 — build 8699 jobs clean.
@@ -23,15 +24,18 @@ T7 COMPLETE (2026-08-01): `MyProof/HeavisideLineConstants.lean` (175 lines, 7 th
 γ² = (R+jωL)(G+jωC), Z₀² = (R+jωL)/(G+jωC), the ratio form (Z/γ)² = Z/Y, the cpow
 squared-sqrt identity (branch-bounded), the distortionless harmonic factorisation
 (√(RS)+jω√(LK))², phase velocity 1/√(LK) — build 8698 jobs clean.
-T5 COMPLETE (2026-08-01): `MyProof/HeavisideEnergyFlux.lean` (74 lines, 3 theorems) —
+T5 COMPLETE (2026-08-01): `MyProof/HeavisideEnergyFlux.lean` (94 lines, 5 theorems) —
 W = E×H flux def, perpendicularity to both forces, the Poynting balance
 div(E×H) = −(H·Ḃ + E·J) — build 8698 jobs clean.
 T6 COMPLETE (2026-08-01): `MyProof/HeavisideGravitomagnetic.lean` (145 lines, 5 theorems) —
 e = ∇P irrotational, circuital gravitational current, Poisson's equation,
 potential-circuital, the gravitational speed μcv² = 1 ⟹ v = 1/√(μc) — build 8700 jobs clean.
-T8 COMPLETE (2026-08-01): `MyProof/HeavisideMass.lean` (118 lines, 3 theorems) —
-mass factor 1/√(1−β²) ≥ 1, strictly monotone in β, equatorial density ratio
-(1−β²)⁻³ — build 8701 jobs clean.
+T8 COMPLETE (2026-08-02, reframed): `MyProof/HeavisideMass.lean` (120 lines) — the
+Searle energy coefficient (W(β) = W₀·g(β), g the 1897 coefficient) + the equatorial
+density ratio (1−β²)⁻³ + the momentum-direction statement.  The γ = 1/√(1−β²)
+lemmas moved to `HeavisideMovingCharge` as the equatorial-enhancement theorems
+(`enhancement_ge_one`, `enhancement_mono`) — γ is Heaviside's field factor, NOT a
+mass; the γ-mass is Lorentz's deformable electron (1899/1904).
 T9 COMPLETE (2026-08-02): `MyProof/HeavisideFractional.lean` (290 lines, 6 theorems) —
 the heat kernel ∂G/∂t = D·∂²G/∂x² (fundamental solution), the cable form ∂G/∂t =
 (1/KR)·∂²G/∂x², the unit-step derivative on both half-lines (the impulse is concentrated
@@ -288,26 +292,20 @@ transform is absent from the pin — statement-level, like T3).
 
 ---
 
-## Execution order and cross-links
+## Execution order (completion log — dated; the live status is the block at the top)
 
-1. **T1** DONE — ℝ calculus + algebra; the operator notation R + Lp introduces p.
-2. **T3** DONE — step function + partial fractions + normal-mode ODE (the expansion theorem's
-   algebraic core).
-3. **T2** DONE — V3 machinery, HcurlGrad/HdivCross premises from the O-Animator corpus.
-4. **T4** NEXT — V3 + trig; the ET3 §483 Q₀ = Q/p link to T3; the three-laws test links to
-   T2; the field feeds T8.
-5. **T7** — the cheapest remaining: pure ℂ algebra corollary of T1.
-6. **T6** — the GEM system: T2's structure with different constants (self-contained).
-7. **T5** — energy flux: extend the O-Animator `PoyntingFlux.lean` (HdivCross machinery).
-8. **T8** — electromagnetic mass: from the T4 field definitions.
-9. **T9** — erfc solves the cable diffusion equation + the u′ = δ impulse identity.
+1. **T1** DONE (2026-08-01) — ℝ calculus + algebra; the operator notation R + Lp introduces p.
+2. **T3** DONE (2026-08-01) — step function + partial fractions + normal-mode ODE (the
+   expansion theorem's algebraic core).
+3. **T2** DONE (2026-08-01) — V3 machinery, HcurlGrad/HdivCross premises.
+4. **T4** DONE (2026-08-02) — V3 + trig; the ET3 §483 Q₀ = Q/p link to T3; the field feeds T8.
+5. **T7** DONE (2026-08-02) — pure ℂ algebra corollary of T1.
+6. **T6** DONE (2026-08-02) — the GEM system: T2's structure with different constants.
+7. **T5** DONE (2026-08-02) — energy flux: the flux definition + the Poynting balance.
+8. **T8** DONE (2026-08-02) — the field-energy lemmas (see the T8 framing note below).
+9. **T9** DONE (2026-08-02) — the heat kernel + the impulse half-line derivatives.
 
-Cross-links to existing corpus: `DistributionLaws.lean` (δ-adjoint for u′ = δ),
-`VectorCalculus.lean` (V3, curl/grad/div premises), `MultipoleSymmetry.lean`
-(BAC−CAB triple product), `PoyntingFlux.lean` (energy flux — T5's starting point),
-`NeumannDebye.lean` (Helmholtz premise pattern), `KnotField.lean` (div-curl-consistency).
-
-
+All nine targets complete as of 2026-08-02.
 ---
 
 ## Weight classes and verification gates
@@ -319,14 +317,15 @@ identity, (c) derivation from premises):
 - **(b) 25** — T1 `distortionless_factorisation`, `distortionless_finite_speed`; T3
   `expansion_two_pole_const`, `expansion_two_pole_poly2`; T4 `field_perpendicular`,
   `field_axial`, `field_equatorial`, `equatorial_over_axial`, `equatorial_ratio_ge_one`,
-  `flattening_ge_one`, `speed_condition`, `cone_angle`; T7 `sqrt_sq`, `gamma_sq`, `z0_sq`,
-  `z0_ratio_sq`, `impedance_ratio_consistency`, `distortionless_square`, `phase_velocity`;
-  T5 `flux_perp_E`, `flux_perp_H`; T8 `mass_factor_ge_one`, `mass_factor_mono`,
-  `equatorial_density_ratio`; T9 `cable_equation` (instantiation).
+  `flattening_ge_one`, `speed_condition`, `cone_angle`, `enhancement_ge_one`,
+  `enhancement_mono`; T7 `sqrt_sq`, `gamma_sq`, `z0_sq`, `z0_ratio_sq`,
+  `impedance_ratio_consistency`, `distortionless_square`, `phase_velocity`;
+  T5 `flux_perp_E`, `flux_perp_H`; T8 `equatorial_density_ratio`; T9 `cable_equation`
+  (instantiation).
 - **(c) 23** — T1 `telegrapher_second_order_V`, `distortionless_wave_solution`; T2 all six
   (`current_circuital`, `potential_is_circuital`, `total_current_circuital`,
   `continuity_from_circuital`, `free_wave_equation`, `induction_circuital_of_continuity`);
-  T3 `exp_solves_ode`; T4 `moving_charge_induction_circuital`; T5 `flux_divergence`,
+  T3 `exp_solves_ode`; T4 `moving_charge_induction_circuital`; T5 `div`, `flux_divergence`,
   `poynting_balance`; T6 all five; T9 `heat_kernel_x_deriv`, `heat_kernel_xx_deriv`,
   `heat_kernel_heat_equation`, `deriv_unitStep_pos`, `deriv_unitStep_neg`.
 

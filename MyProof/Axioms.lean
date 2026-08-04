@@ -1,0 +1,63 @@
+import MyProof.HeavisideTelegrapher
+import MyProof.HeavisideField
+import MyProof.HeavisideOperational
+import MyProof.HeavisideMovingCharge
+import MyProof.HeavisideLineConstants
+import MyProof.HeavisideEnergyFlux
+import MyProof.HeavisideGravitomagnetic
+import MyProof.HeavisideMass
+import MyProof.HeavisideFractional
+
+/-! Axiom footprint of every theorem.  The CI job fails on any line that
+    is not exactly [propext, Classical.choice, Quot.sound]. -/
+#print axioms HeavisideTelegrapher.telegrapher_second_order_V
+#print axioms HeavisideTelegrapher.distortionless_factorisation
+#print axioms HeavisideTelegrapher.distortionless_finite_speed
+#print axioms HeavisideTelegrapher.distortionless_wave_solution
+#print axioms HeavisideField.current_circuital
+#print axioms HeavisideField.potential_is_circuital
+#print axioms HeavisideField.total_current_circuital
+#print axioms HeavisideField.continuity_from_circuital
+#print axioms HeavisideField.free_wave_equation
+#print axioms HeavisideField.induction_circuital_of_continuity
+#print axioms HeavisideOperational.unitStep_pos
+#print axioms HeavisideOperational.unitStep_neg
+#print axioms HeavisideOperational.unitStep_add_neg
+#print axioms HeavisideOperational.expansion_two_pole_const
+#print axioms HeavisideOperational.expansion_two_pole_poly2
+#print axioms HeavisideOperational.exp_solves_ode
+#print axioms HeavisideMovingCharge.field_perpendicular
+#print axioms HeavisideMovingCharge.field_axial
+#print axioms HeavisideMovingCharge.field_equatorial
+#print axioms HeavisideMovingCharge.equatorial_over_axial
+#print axioms HeavisideMovingCharge.equatorial_ratio_ge_one
+#print axioms HeavisideMovingCharge.flattening_ge_one
+#print axioms HeavisideMovingCharge.speed_condition
+#print axioms HeavisideMovingCharge.cone_angle
+#print axioms HeavisideMovingCharge.moving_charge_induction_circuital
+#print axioms HeavisideMovingCharge.enhancement_ge_one
+#print axioms HeavisideMovingCharge.enhancement_mono
+#print axioms HeavisideLineConstants.sqrt_sq
+#print axioms HeavisideLineConstants.gamma_sq
+#print axioms HeavisideLineConstants.z0_sq
+#print axioms HeavisideLineConstants.z0_ratio_sq
+#print axioms HeavisideLineConstants.impedance_ratio_consistency
+#print axioms HeavisideLineConstants.distortionless_square
+#print axioms HeavisideLineConstants.phase_velocity
+#print axioms HeavisideEnergyFlux.div
+#print axioms HeavisideEnergyFlux.flux_perp_E
+#print axioms HeavisideEnergyFlux.flux_perp_H
+#print axioms HeavisideEnergyFlux.flux_divergence
+#print axioms HeavisideEnergyFlux.poynting_balance
+#print axioms HeavisideGravitomagnetic.grav_force_irrotational
+#print axioms HeavisideGravitomagnetic.grav_current_circuital
+#print axioms HeavisideGravitomagnetic.poisson_from_laws
+#print axioms HeavisideGravitomagnetic.grav_potential_circuital
+#print axioms HeavisideGravitomagnetic.gem_speed_condition
+#print axioms HeavisideMass.equatorial_density_ratio
+#print axioms HeavisideFractional.heat_kernel_x_deriv
+#print axioms HeavisideFractional.heat_kernel_xx_deriv
+#print axioms HeavisideFractional.heat_kernel_heat_equation
+#print axioms HeavisideFractional.cable_equation
+#print axioms HeavisideFractional.deriv_unitStep_pos
+#print axioms HeavisideFractional.deriv_unitStep_neg

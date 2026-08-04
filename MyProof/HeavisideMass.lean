@@ -121,10 +121,10 @@ theorem excess_small_beta_limit :
   have hb0 : Tendsto (fun β : ℝ => β) (𝓝[>] 0) (𝓝 0) :=
     tendsto_nhdsWithin_of_tendsto_nhds tendsto_id
   have hp : Tendsto (fun β : ℝ => 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2) (𝓝[>] 0) (𝓝 0) := by
-    have h1 : Tendsto (fun β : ℝ => 2 * β) (𝓝[>] 0) (𝓝 0) := hb0.const_mul 2
-    have h2 : Tendsto (fun β : ℝ => 2 * β ^ 3) (𝓝[>] 0) (𝓝 0) := (hb0.pow 3).const_mul 2
-    have h3 : Tendsto (fun β : ℝ => (1 / 3) * β ^ 2) (𝓝[>] 0) (𝓝 0) := (hb0.pow 2).const_mul (1 / 3)
-    exact (h1.add h2).add h3
+    have h1 : Tendsto (fun β : ℝ => 2 * β) (𝓝[>] 0) (𝓝 0) := by simpa using hb0.const_mul 2
+    have h2 : Tendsto (fun β : ℝ => 2 * β ^ 3) (𝓝[>] 0) (𝓝 0) := by simpa using (hb0.pow 3).const_mul 2
+    have h3 : Tendsto (fun β : ℝ => (1 / 3) * β ^ 2) (𝓝[>] 0) (𝓝 0) := by simpa [one_div] using (hb0.pow 2).const_mul (1 / 3 : ℝ)
+    simpa using (h1.add h2).add h3
   have hbound (β : ℝ) (hβ0 : 0 < β) (hβ12 : β < 1 / 2) :
       |excessEnergyCoefficient β / β ^ 2 - 4 / 3| ≤ 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2 := by
     have hβ1 : β < 1 := lt_trans hβ12 (by norm_num)
@@ -134,15 +134,17 @@ theorem excess_small_beta_limit :
           |Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3| + (2 / 3) * β ^ 3 := by
         have h' : Real.log (1 + β) - Real.log (1 - β) - 2 * β =
             (Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3) + (2 / 3) * β ^ 3 := by ring
-        rw [h']
-        exact abs_add _ _
-      exact le_trans hsplit (add_le_add_right hLb _)
+        calc
+          |Real.log (1 + β) - Real.log (1 - β) - 2 * β|
+              = |(Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3) + (2 / 3) * β ^ 3| := congrArg abs h'
+          _ ≤ |Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3| + |(2 / 3) * β ^ 3| := abs_add_le _ _
+          _ = |Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3| + (2 / 3) * β ^ 3 := by
+                rw [abs_of_nonneg (by positivity : 0 ≤ (2 / 3) * β ^ 3)]
+      exact le_trans hsplit (by simpa [add_comm, add_left_comm, add_assoc] using add_le_add_right hLb ((2 / 3) * β ^ 3))
     have hle2 : 1 / (1 - β) ≤ 2 := by
       have hd : 1 - β ≥ 1 / 2 := by linarith
       have hpos : 0 < 1 - β := by linarith
-      -- 1/(1−β) ≤ 2 from (1−β) ≥ 1/2
-      rw [one_div]
-      rw [inv_le_comm₀ (by positivity : 0 < (1 : ℝ)) hpos]  -- hmm — probe
+      rw [div_le_iff₀ hpos]
       linarith
     have hnum : |(1 + β ^ 2) * (Real.log (1 + β) - Real.log (1 - β)) - 2 * β - (8 / 3) * β ^ 3|
         ≤ 2 * β ^ 4 / (1 - β) + β ^ 2 * (2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3) := by
@@ -156,7 +158,7 @@ theorem excess_small_beta_limit :
         exact mul_le_mul_of_nonneg_left hL2 (by positivity : 0 ≤ β ^ 2)
       calc
         |(Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3) + β ^ 2 * (Real.log (1 + β) - Real.log (1 - β) - 2 * β)|
-            ≤ |Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3| + |β ^ 2 * (Real.log (1 + β) - Real.log (1 - β) - 2 * β)| := abs_add _ _
+            ≤ |Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3| + |β ^ 2 * (Real.log (1 + β) - Real.log (1 - β) - 2 * β)| := abs_add_le _ _
         _ ≤ 2 * β ^ 4 / (1 - β) + β ^ 2 * (2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3) := add_le_add hLb habs
     have hnum2 : |excessEnergyCoefficient β / β ^ 2 - 4 / 3| = |(1 + β ^ 2) * (Real.log (1 + β) - Real.log (1 - β)) - 2 * β - (8 / 3) * β ^ 3| / (2 * β ^ 3) := by
       unfold excessEnergyCoefficient
@@ -179,27 +181,35 @@ theorem excess_small_beta_limit :
       exact div_le_div_of_nonneg_right hnum (le_of_lt hden)
     refine le_trans hstep1 ?_
     have h1 : 2 * β ^ 4 / (1 - β) ≤ 4 * β ^ 4 := by
-      rw [div_eq_mul_inv]
       calc
-        2 * β ^ 4 * (1 / (1 - β)) ≤ 2 * β ^ 4 * 2 := mul_le_mul_of_nonneg_left hle2 (by positivity : 0 ≤ 2 * β ^ 4)
+        2 * β ^ 4 / (1 - β) ≤ 2 * β ^ 4 * 2 := by
+          rw [div_eq_mul_inv]
+          exact mul_le_mul_of_nonneg_left (by simpa [one_div] using hle2) (by positivity : 0 ≤ 2 * β ^ 4)
         _ = 4 * β ^ 4 := by ring
     have h2 : β ^ 2 * (2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3) ≤ β ^ 2 * (4 * β ^ 4 + (2 / 3) * β ^ 3) := by
-      exact mul_le_mul_of_nonneg_left (add_le_add_right h1 _) (by positivity : 0 ≤ β ^ 2)
+      exact mul_le_mul_of_nonneg_left (by simpa [add_comm, add_left_comm, add_assoc] using add_le_add_right h1 ((2 / 3) * β ^ 3)) (by positivity : 0 ≤ β ^ 2)
     have htop : 2 * β ^ 4 / (1 - β) + β ^ 2 * (2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3)
         ≤ 4 * β ^ 4 + β ^ 2 * (4 * β ^ 4 + (2 / 3) * β ^ 3) := add_le_add h1 h2
     have hdiv : (4 * β ^ 4 + β ^ 2 * (4 * β ^ 4 + (2 / 3) * β ^ 3)) / (2 * β ^ 3) ≤ 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2 := by
       field_simp [ne_of_gt hden]
       nlinarith [sq_nonneg β, sq_nonneg (β ^ 2)]
     exact le_trans (div_le_div_of_nonneg_right htop (le_of_lt hden)) hdiv
-  have hb : ∀ᶠ β in 𝓝[>] 0, |excessEnergyCoefficient β / β ^ 2 - 4 / 3| ≤ 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2 := by
-    filter_upwards [Ioo_mem_nhdsWithin_Ioi (by norm_num : (0 : ℝ) < 1 / 2)] with β hβ
-    exact hbound β hβ.1 hβ.2
+  have hb : ∀ᶠ (β : ℝ) in 𝓝[>] 0, |excessEnergyCoefficient β / β ^ 2 - 4 / 3| ≤ 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2 := by
+    have hhalf : ∀ᶠ (β : ℝ) in 𝓝[>] 0, β < 1 / 2 := by
+      have hd : ∀ᶠ (β : ℝ) in 𝓝[>] 0, dist β 0 < (1 / 2 : ℝ) := (Metric.tendsto_nhds.mp hb0) (1 / 2 : ℝ) (by norm_num)
+      filter_upwards [hd] with β hdβ
+      exact (abs_lt.mp (by simpa [Real.dist_eq, sub_zero] using hdβ)).2
+    have hpos : ∀ᶠ (β : ℝ) in 𝓝[>] 0, 0 < β := by
+      filter_upwards [self_mem_nhdsWithin] with β hβ
+      exact hβ
+    filter_upwards [hhalf, hpos] with β hβ12 hβ0
+    exact hbound β hβ0 hβ12
   apply Metric.tendsto_nhds.2
   intro ε hε
-  have hpε : ∀ᶠ β in 𝓝[>] 0, 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2 < ε := by
-    have hd : ∀ᶠ β in 𝓝[>] 0, dist (2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2) 0 < ε := (Metric.tendsto_nhds.mp hp) ε hε
+  have hpε : ∀ᶠ (β : ℝ) in 𝓝[>] 0, 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2 < ε := by
+    have hd : ∀ᶠ (β : ℝ) in 𝓝[>] 0, dist (2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2) 0 < ε := (Metric.tendsto_nhds.mp hp) ε hε
     filter_upwards [hd] with β hdβ
-    simpa [Real.dist_eq, abs_of_nonneg (by positivity : 0 ≤ 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2)] using hdβ
+    exact (abs_lt.mp (by simpa [Real.dist_eq, sub_zero] using hdβ)).2
   filter_upwards [hb, hpε] with β hbd hpe
   simpa [Real.dist_eq] using lt_of_le_of_lt hbd hpe
 

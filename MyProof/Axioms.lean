@@ -10,10 +10,10 @@ import MyProof.HeavisideFractional
 
 /-! Axiom footprint of every theorem.  The CI job fails on any line that
     is not exactly [propext, Classical.choice, Quot.sound]. -/
-#print axioms HeavisideTelegrapher.telegrapher_second_order_V
-#print axioms HeavisideTelegrapher.distortionless_factorisation
-#print axioms HeavisideTelegrapher.distortionless_finite_speed
-#print axioms HeavisideTelegrapher.distortionless_wave_solution
+#print axioms HeavisideTelegraph.telegrapher_second_order_V
+#print axioms HeavisideTelegraph.distortionless_factorisation
+#print axioms HeavisideTelegraph.distortionless_finite_speed
+#print axioms HeavisideTelegraph.distortionless_wave_solution
 #print axioms HeavisideField.current_circuital
 #print axioms HeavisideField.potential_is_circuital
 #print axioms HeavisideField.total_current_circuital
@@ -48,11 +48,11 @@ import MyProof.HeavisideFractional
 #print axioms HeavisideEnergyFlux.flux_perp_H
 #print axioms HeavisideEnergyFlux.flux_divergence
 #print axioms HeavisideEnergyFlux.poynting_balance
-#print axioms HeavisideGravitomagnetic.grav_force_irrotational
-#print axioms HeavisideGravitomagnetic.grav_current_circuital
-#print axioms HeavisideGravitomagnetic.poisson_from_laws
-#print axioms HeavisideGravitomagnetic.grav_potential_circuital
-#print axioms HeavisideGravitomagnetic.gem_speed_condition
+#print axioms HeavisideGEM.grav_force_irrotational
+#print axioms HeavisideGEM.grav_current_circuital
+#print axioms HeavisideGEM.poisson_from_laws
+#print axioms HeavisideGEM.grav_potential_circuital
+#print axioms HeavisideGEM.gem_speed_condition
 #print axioms HeavisideMass.equatorial_density_ratio
 #print axioms HeavisideFractional.heat_kernel_x_deriv
 #print axioms HeavisideFractional.heat_kernel_xx_deriv

@@ -1,6 +1,6 @@
 # Heaviside Formalisation Dossier
 
-Status 2026-08-02. Corpus: `papers/` (5 volumes, archive.org, public domain).
+Status 2026-08-04. Corpus: `papers/` (5 volumes, archive.org, public domain).
 Env: Lean 4.33.0-rc1, mathlib pin `f4570dc2f3c801ed0c0edd5867f943e2b84e4dec` — carried in the
 repository's lakefile (the reproduction unit is the repo: lakefile + lean-toolchain + MyProof/).
 Method: per-claim kernel verification; physics in the premises, theorems about the model's logic;
@@ -30,8 +30,8 @@ div(E×H) = −(H·Ḃ + E·J) — build 8698 jobs clean.
 T6 COMPLETE (2026-08-01): `MyProof/HeavisideGravitomagnetic.lean` (145 lines, 5 theorems) —
 e = ∇P irrotational, circuital gravitational current, Poisson's equation,
 potential-circuital, the gravitational speed μcv² = 1 ⟹ v = 1/√(μc) — build 8700 jobs clean.
-T8 COMPLETE (2026-08-02, reframed): `MyProof/HeavisideMass.lean` (120 lines, 1 theorem)
-— the Searle/Abraham excess-energy coefficient g(β) and the equatorial density ratio
+T8 COMPLETE (2026-08-02, reframed): `MyProof/HeavisideMass.lean` (260 lines, 2 theorems)
+— the excess-energy coefficient (g-bracket) g(β) and the equatorial density ratio
 (1−β²)⁻³ (the theorem); the γ = 1/√(1−β²) lemmas moved to `HeavisideMovingCharge` as
 the equatorial-enhancement theorems (`enhancement_ge_one`, `enhancement_mono`) — γ is
 Heaviside's field factor, NOT a mass; the γ-mass is Lorentz's deformable electron
@@ -237,8 +237,10 @@ Z₀ = √((R+jωL)/(G+jωC)). Corollaries of T1's operator algebra with p = jω
 
 **Statement:** in the harmonic regime p = jω, the propagation constant γ and the
 characteristic impedance Z₀ satisfy: γ² = (R+jωL)(G+jωC), Z₀² = (R+jωL)/(G+jωC), and the
-consistency Z₀·γ = R+jωL (equivalently Z₀ = (R+jωL)/γ — the impedance is the ratio of
-voltage to current wave amplitudes).
+squared cross-consistency (Z₀·γ)² = (R+jωL)² — kernel-verified as
+`impedance_ratio_consistency` (Z₀² = (Z/γ)²).  The unsquared Z₀·γ = R+jωL is a branch
+choice on the principal square roots, NOT kernel-verified; the impedance-as-amplitude-
+ratio reading is the squared form's transcription.
 
 **Formalisation plan:** pure ℂ algebra (Complex.instField in the pin). Theorems: the two
 squared identities as definitions, the cross-consistency Z₀·γ = R+jωL proved from them by
@@ -266,8 +268,11 @@ the primary sources before the label hardens (see the status block).
 **Formalised:** `excessEnergyCoefficient` (the g-bracket, named with the contestable-attribution
 flag), `movingEnergyRatio` (the excess-energy statement), `equatorial_density_ratio` — the
 (1−β²)⁻³ density concentration from the T4 field (the theorem), and `MomentumAlongMotion`
-(the momentum-direction statement).  The small-speed limit lim g(β)/β² = 4/3 is the
-planned next theorem (the Kaufmann m/m₀ = (3/4)·ψ(β) normalization's exactness at β = 0).
+(the momentum-direction statement).  The small-speed limit lim_{β→0⁺} g(β)/β² = 4/3 is PROVED as
+`excess_small_beta_limit` — by squeeze from the log-Taylor remainder
+(`Real.abs_log_sub_add_sum_range_le`): for β ∈ (0, ½), |g/β² − 4/3| ≤ 2β + 2β³ + β²/3.
+The Kaufmann m/m₀ = (3/4)·ψ(β) normalization is exact at β = 0 exactly because of
+this limit — the 4/3 is now a derived fact, not a prose assertion.
 
 ## T9 — Fractional operators and the impulse function
 
@@ -289,10 +294,13 @@ G = exp(−x²/4Dt)/(2√(πDt)) with ∂G/∂t = D·∂²G/∂x² — the pinne
 `Gaussian`, `pdfNormal`, `Real.gaussian` all unknown; file-level search of `Mathlib/`
 finds no erfc; the Gaussian density `gaussianPDFReal` in
 `Probability/Distributions/Gaussian/Real.lean` exists but no CDF/erfc is defined on it).
-The cable response erfc(x/(2√(Dt))) is the accumulated kernel profile (an x-antiderivative
-v(x,t) = ∫_{x₀}^x u(s,t) ds of a heat-equation solution satisfies the same equation —
-premise-structured via the FTC and the switching of the t-derivative under the integral).
-The correspondence is
+The cable response erfc(x/(2√(Dt))) is the accumulated kernel profile.  An
+x-antiderivative v(x,t) = ∫_{x₀}^x u(s,t) ds of a heat-equation solution satisfies the
+same equation ONLY under the boundary hypothesis hbdry : ∀ t, deriv (fun s => u s t) x₀ = 0
+— differentiating under the integral gives v_t = D·v_xx − D·u_x(x₀,t), so the boundary
+term must vanish (for the Gaussian kernel it does, by decay at x₀ = −∞ — which is exactly
+why the erfc case works); stated premise-structured with the FTC and the swap.  The
+correspondence is
 NOT "p^½ ↦ erfc": the erfc is the operational image of e^{−x√(pRK)}/p — the
 exponential-of-the-half-power, not of p^½ itself; (b) the
 impulse as the distributional derivative of the step: ⟨u′, f⟩ = −⟨u, f′⟩ = f(0) = ⟨δ, f⟩
@@ -320,7 +328,7 @@ All nine targets complete as of 2026-08-02.
 
 ## Weight classes and verification gates
 
-**Weight-class tagging** (50 theorems; (a) definition/restatement, (b) algebra/calculus
+**Weight-class tagging** (51 theorems; (a) definition/restatement, (b) algebra/calculus
 identity, (c) derivation from premises):
 
 - **(a) 3** — `unitStep_pos`, `unitStep_neg`, `unitStep_add_neg` (indicator evaluations).
@@ -332,12 +340,13 @@ identity, (c) derivation from premises):
   `impedance_ratio_consistency`, `distortionless_square`, `phase_velocity`;
   T5 `flux_perp_E`, `flux_perp_H`; T8 `equatorial_density_ratio`; T9 `cable_equation`
   (instantiation).
-- **(c) 22** — T1 `telegrapher_second_order_V`, `distortionless_wave_solution`; T2 all six
+- **(c) 23** — T1 `telegrapher_second_order_V`, `distortionless_wave_solution`; T2 all six
   (`current_circuital`, `potential_is_circuital`, `total_current_circuital`,
   `continuity_from_circuital`, `free_wave_equation`, `induction_circuital_of_continuity`);
   T3 `exp_solves_ode`; T4 `moving_charge_induction_circuital`; T5 `flux_divergence`,
-  `poynting_balance`; T6 all five; T9 `heat_kernel_x_deriv`, `heat_kernel_xx_deriv`,
-  `heat_kernel_heat_equation`, `deriv_unitStep_pos`, `deriv_unitStep_neg`.
+  `poynting_balance`; T6 all five; T8 `excess_small_beta_limit`; T9
+  `heat_kernel_x_deriv`, `heat_kernel_xx_deriv`, `heat_kernel_heat_equation`,
+  `deriv_unitStep_pos`, `deriv_unitStep_neg`.
 
 **Axiom-check provenance.**  The standing `axioms = [propext, Classical.choice,
 Quot.sound]` property has been checked theorem-by-theorem since T1, but the
@@ -354,7 +363,12 @@ numbers (r = 1, u = 1, v = 2); T2/T5 zero-field and the plane-wave profile (the 
 are the curl pair — any differentiable field pair instantiates them); T3 the concrete
 rational Q/P with the two nonzero poles; T8 the concrete β = 1/2; T9 the kernel with
 D = 1, x = 1, t = 1.  Compiling witnesses certify satisfiability of the bundles used.
-A `Witnesses.lean` file with these instantiations is the planned next addition.
+`MyProof/Witnesses.lean` implements this gate — the bundles as structures with one
+concrete term each (the elaborator enforces joint satisfiability): the distortionless
+line R = 1, L = 2, S = 3, K = 6; the two-pole rational; the moving-charge config
+(r = u = 1, v = 2); the heat config (D = t = 1); the GEM linear potential; and the
+T2/T5 field bundle with the zero-field smoke test (satisfiability) — the plane-wave
+instantiation documented as the non-trivial witness of record.  Gated in CI.
 
 **Non-triviality spot-checks.**  Deleting a physics premise breaks the proof: dropping
 `hRK` (the distortionless condition) from `distortionless_factorisation`, dropping `hampere`

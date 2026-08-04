@@ -21,7 +21,7 @@ jobs:
 
       - name: Build (explicit target — the bare lake build has no default target here)
         run: |
-          lake build MyProof.Axioms
+          lake build MyProof.Axioms MyProof.Witnesses
 
       - name: 'Axioms check (every theorem: standard trio only)'
         run: |

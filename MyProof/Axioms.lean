@@ -54,6 +54,7 @@ import MyProof.HeavisideFractional
 #print axioms HeavisideGEM.grav_potential_circuital
 #print axioms HeavisideGEM.gem_speed_condition
 #print axioms HeavisideMass.equatorial_density_ratio
+#print axioms HeavisideMass.excess_small_beta_limit
 #print axioms HeavisideFractional.heat_kernel_x_deriv
 #print axioms HeavisideFractional.heat_kernel_xx_deriv
 #print axioms HeavisideFractional.heat_kernel_heat_equation

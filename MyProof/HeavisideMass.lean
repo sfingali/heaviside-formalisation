@@ -82,4 +82,123 @@ theorem equatorial_density_ratio (q r u v : ℝ) (hr : r ≠ 0) (hβ : 0 < 1 - b
 def MomentumAlongMotion (P : V3) : Prop :=
   P 0 = 0 ∧ P 1 = 0
 
+theorem excess_small_beta_limit :
+    Tendsto (fun β : ℝ => excessEnergyCoefficient β / β ^ 2) (𝓝[>] 0) (𝓝 (4 / 3)) := by
+  have hrem (β : ℝ) (hβ0 : 0 < β) (hβ1 : β < 1) :
+      |β + β ^ 2 / 2 + β ^ 3 / 3 + Real.log (1 - β)| ≤ β ^ 4 / (1 - β) := by
+    have hx : |β| < 1 := by simpa [abs_of_pos hβ0] using hβ1
+    have h := Real.abs_log_sub_add_sum_range_le hx 3
+    have hsum : (∑ i ∈ Finset.range 3, β ^ (i + 1) / (i + 1)) = β + β ^ 2 / 2 + β ^ 3 / 3 := by
+      norm_num [Finset.sum_range_succ, pow_succ]
+    rw [hsum] at h
+    simpa [abs_of_pos hβ0] using h
+  have hrem2 (β : ℝ) (hβ0 : 0 < β) (hβ1 : β < 1) :
+      |-β + β ^ 2 / 2 - β ^ 3 / 3 + Real.log (1 + β)| ≤ β ^ 4 / (1 - β) := by
+    have hx : |(-β : ℝ)| < 1 := by simpa [abs_of_pos hβ0] using hβ1
+    have h := Real.abs_log_sub_add_sum_range_le hx 3
+    have hsum : (∑ i ∈ Finset.range 3, (-β) ^ (i + 1) / (i + 1)) = -β + β ^ 2 / 2 - β ^ 3 / 3 := by
+      norm_num [Finset.sum_range_succ, pow_succ]
+      ring
+    rw [hsum] at h
+    simpa [abs_of_pos hβ0] using h
+  have hL (β : ℝ) (hβ0 : 0 < β) (hβ1 : β < 1) :
+      |Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3| ≤ 2 * β ^ 4 / (1 - β) := by
+    have e1 : |Real.log (1 - β) + (β + β ^ 2 / 2 + β ^ 3 / 3)| ≤ β ^ 4 / (1 - β) := by
+      simpa [add_comm] using hrem β hβ0 hβ1
+    have e2 : |Real.log (1 + β) + (-β + β ^ 2 / 2 - β ^ 3 / 3)| ≤ β ^ 4 / (1 - β) := by
+      simpa [add_comm] using hrem2 β hβ0 hβ1
+    have hcombo : Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3
+        = (Real.log (1 + β) + (-β + β ^ 2 / 2 - β ^ 3 / 3)) - (Real.log (1 - β) + (β + β ^ 2 / 2 + β ^ 3 / 3)) := by
+      ring
+    rw [hcombo]
+    calc
+      |(Real.log (1 + β) + (-β + β ^ 2 / 2 - β ^ 3 / 3)) - (Real.log (1 - β) + (β + β ^ 2 / 2 + β ^ 3 / 3))|
+          ≤ |Real.log (1 + β) + (-β + β ^ 2 / 2 - β ^ 3 / 3)| + |Real.log (1 - β) + (β + β ^ 2 / 2 + β ^ 3 / 3)| := abs_sub _ _
+      _ ≤ β ^ 4 / (1 - β) + β ^ 4 / (1 - β) := add_le_add e2 e1
+      _ = 2 * β ^ 4 / (1 - β) := by ring
+  have hb0 : Tendsto (fun β : ℝ => β) (𝓝[>] 0) (𝓝 0) :=
+    tendsto_nhdsWithin_of_tendsto_nhds tendsto_id
+  have hp : Tendsto (fun β : ℝ => 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2) (𝓝[>] 0) (𝓝 0) := by
+    have h1 : Tendsto (fun β : ℝ => 2 * β) (𝓝[>] 0) (𝓝 0) := hb0.const_mul 2
+    have h2 : Tendsto (fun β : ℝ => 2 * β ^ 3) (𝓝[>] 0) (𝓝 0) := (hb0.pow 3).const_mul 2
+    have h3 : Tendsto (fun β : ℝ => (1 / 3) * β ^ 2) (𝓝[>] 0) (𝓝 0) := (hb0.pow 2).const_mul (1 / 3)
+    exact (h1.add h2).add h3
+  have hbound (β : ℝ) (hβ0 : 0 < β) (hβ12 : β < 1 / 2) :
+      |excessEnergyCoefficient β / β ^ 2 - 4 / 3| ≤ 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2 := by
+    have hβ1 : β < 1 := lt_trans hβ12 (by norm_num)
+    have hLb := hL β hβ0 hβ1
+    have hL2 : |Real.log (1 + β) - Real.log (1 - β) - 2 * β| ≤ 2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3 := by
+      have hsplit : |Real.log (1 + β) - Real.log (1 - β) - 2 * β| ≤
+          |Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3| + (2 / 3) * β ^ 3 := by
+        have h' : Real.log (1 + β) - Real.log (1 - β) - 2 * β =
+            (Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3) + (2 / 3) * β ^ 3 := by ring
+        rw [h']
+        exact abs_add _ _
+      exact le_trans hsplit (add_le_add_right hLb _)
+    have hle2 : 1 / (1 - β) ≤ 2 := by
+      have hd : 1 - β ≥ 1 / 2 := by linarith
+      have hpos : 0 < 1 - β := by linarith
+      -- 1/(1−β) ≤ 2 from (1−β) ≥ 1/2
+      rw [one_div]
+      rw [inv_le_comm₀ (by positivity : 0 < (1 : ℝ)) hpos]  -- hmm — probe
+      linarith
+    have hnum : |(1 + β ^ 2) * (Real.log (1 + β) - Real.log (1 - β)) - 2 * β - (8 / 3) * β ^ 3|
+        ≤ 2 * β ^ 4 / (1 - β) + β ^ 2 * (2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3) := by
+      have hsplit2 : (1 + β ^ 2) * (Real.log (1 + β) - Real.log (1 - β)) - 2 * β - (8 / 3) * β ^ 3
+          = (Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3) + β ^ 2 * (Real.log (1 + β) - Real.log (1 - β) - 2 * β) := by
+        ring
+      rw [hsplit2]
+      have habs : |β ^ 2 * (Real.log (1 + β) - Real.log (1 - β) - 2 * β)| ≤ β ^ 2 * (2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3) := by
+        rw [abs_mul]
+        rw [abs_of_nonneg (by positivity : 0 ≤ β ^ 2)]
+        exact mul_le_mul_of_nonneg_left hL2 (by positivity : 0 ≤ β ^ 2)
+      calc
+        |(Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3) + β ^ 2 * (Real.log (1 + β) - Real.log (1 - β) - 2 * β)|
+            ≤ |Real.log (1 + β) - Real.log (1 - β) - 2 * β - (2 / 3) * β ^ 3| + |β ^ 2 * (Real.log (1 + β) - Real.log (1 - β) - 2 * β)| := abs_add _ _
+        _ ≤ 2 * β ^ 4 / (1 - β) + β ^ 2 * (2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3) := add_le_add hLb habs
+    have hnum2 : |excessEnergyCoefficient β / β ^ 2 - 4 / 3| = |(1 + β ^ 2) * (Real.log (1 + β) - Real.log (1 - β)) - 2 * β - (8 / 3) * β ^ 3| / (2 * β ^ 3) := by
+      unfold excessEnergyCoefficient
+      have hlog : Real.log ((1 + β) / (1 - β)) = Real.log (1 + β) - Real.log (1 - β) := by
+        rw [Real.log_div]
+        · positivity
+        · positivity
+      rw [hlog]
+      have h' : ((1 + β ^ 2) / (2 * β) * (Real.log (1 + β) - Real.log (1 - β)) - 1) / β ^ 2 - 4 / 3
+          = ((1 + β ^ 2) * (Real.log (1 + β) - Real.log (1 - β)) - 2 * β - (8 / 3) * β ^ 3) / (2 * β ^ 3) := by
+        field_simp [ne_of_gt hβ0]
+        ring
+      rw [h']
+      rw [abs_div]
+      rw [abs_of_nonneg (by positivity : 0 ≤ 2 * β ^ 3)]
+    rw [hnum2]
+    have hden : 0 < 2 * β ^ 3 := by positivity
+    have hstep1 : |(1 + β ^ 2) * (Real.log (1 + β) - Real.log (1 - β)) - 2 * β - (8 / 3) * β ^ 3| / (2 * β ^ 3)
+        ≤ (2 * β ^ 4 / (1 - β) + β ^ 2 * (2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3)) / (2 * β ^ 3) := by
+      exact div_le_div_of_nonneg_right hnum (le_of_lt hden)
+    refine le_trans hstep1 ?_
+    have h1 : 2 * β ^ 4 / (1 - β) ≤ 4 * β ^ 4 := by
+      rw [div_eq_mul_inv]
+      calc
+        2 * β ^ 4 * (1 / (1 - β)) ≤ 2 * β ^ 4 * 2 := mul_le_mul_of_nonneg_left hle2 (by positivity : 0 ≤ 2 * β ^ 4)
+        _ = 4 * β ^ 4 := by ring
+    have h2 : β ^ 2 * (2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3) ≤ β ^ 2 * (4 * β ^ 4 + (2 / 3) * β ^ 3) := by
+      exact mul_le_mul_of_nonneg_left (add_le_add_right h1 _) (by positivity : 0 ≤ β ^ 2)
+    have htop : 2 * β ^ 4 / (1 - β) + β ^ 2 * (2 * β ^ 4 / (1 - β) + (2 / 3) * β ^ 3)
+        ≤ 4 * β ^ 4 + β ^ 2 * (4 * β ^ 4 + (2 / 3) * β ^ 3) := add_le_add h1 h2
+    have hdiv : (4 * β ^ 4 + β ^ 2 * (4 * β ^ 4 + (2 / 3) * β ^ 3)) / (2 * β ^ 3) ≤ 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2 := by
+      field_simp [ne_of_gt hden]
+      nlinarith [sq_nonneg β, sq_nonneg (β ^ 2)]
+    exact le_trans (div_le_div_of_nonneg_right htop (le_of_lt hden)) hdiv
+  have hb : ∀ᶠ β in 𝓝[>] 0, |excessEnergyCoefficient β / β ^ 2 - 4 / 3| ≤ 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2 := by
+    filter_upwards [Ioo_mem_nhdsWithin_Ioi (by norm_num : (0 : ℝ) < 1 / 2)] with β hβ
+    exact hbound β hβ.1 hβ.2
+  apply Metric.tendsto_nhds.2
+  intro ε hε
+  have hpε : ∀ᶠ β in 𝓝[>] 0, 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2 < ε := by
+    have hd : ∀ᶠ β in 𝓝[>] 0, dist (2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2) 0 < ε := (Metric.tendsto_nhds.mp hp) ε hε
+    filter_upwards [hd] with β hdβ
+    simpa [Real.dist_eq, abs_of_nonneg (by positivity : 0 ≤ 2 * β + 2 * β ^ 3 + (1 / 3) * β ^ 2)] using hdβ
+  filter_upwards [hb, hpε] with β hbd hpe
+  simpa [Real.dist_eq] using lt_of_le_of_lt hbd hpe
+
 end HeavisideMass

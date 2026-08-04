@@ -39,8 +39,8 @@ jobs:
 
       - name: Build dossier PDF from the README (single source)
         run: |
-          pip install --quiet weasyprint
-          pandoc README.md -o heaviside-dossier.pdf --pdf-engine=weasyprint
+          pip install --quiet weasyprint markdown
+          python3 scripts/make_pdf.py
 
       - uses: actions/upload-artifact@v4
         with:

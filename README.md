@@ -7,7 +7,7 @@ Method: per-claim kernel verification; physics in the premises, theorems about t
 statements transcribed from the PDF pages, locators by print page.
 
 **Status: T1 COMPLETE (2026-08-01, kernel-verified 0/0, axioms = propext/Classical.choice/Quot.sound).
-`MyProof/HeavisideTelegrapher.lean` (318 lines, 5 theorems) — full build 8697 jobs clean.
+`MyProof/HeavisideTelegrapher.lean` (318 lines, 4 theorems) — full build 8697 jobs clean.
 T2 COMPLETE (2026-08-01): `MyProof/HeavisideField.lean` (197 lines, 6 theorems) —
 the curl pair (4)/(5), circuital current, potential-is-circuital, total-current + continuity,
 the free-space wave equation ΔE = μc·∂²E/∂t², the three-laws bridge — build 8698 jobs clean.
@@ -24,18 +24,20 @@ T7 COMPLETE (2026-08-01): `MyProof/HeavisideLineConstants.lean` (175 lines, 7 th
 γ² = (R+jωL)(G+jωC), Z₀² = (R+jωL)/(G+jωC), the ratio form (Z/γ)² = Z/Y, the cpow
 squared-sqrt identity (branch-bounded), the distortionless harmonic factorisation
 (√(RS)+jω√(LK))², phase velocity 1/√(LK) — build 8698 jobs clean.
-T5 COMPLETE (2026-08-01): `MyProof/HeavisideEnergyFlux.lean` (94 lines, 5 theorems) —
+T5 COMPLETE (2026-08-01): `MyProof/HeavisideEnergyFlux.lean` (94 lines, 4 theorems) —
 W = E×H flux def, perpendicularity to both forces, the Poynting balance
 div(E×H) = −(H·Ḃ + E·J) — build 8698 jobs clean.
 T6 COMPLETE (2026-08-01): `MyProof/HeavisideGravitomagnetic.lean` (145 lines, 5 theorems) —
 e = ∇P irrotational, circuital gravitational current, Poisson's equation,
 potential-circuital, the gravitational speed μcv² = 1 ⟹ v = 1/√(μc) — build 8700 jobs clean.
-T8 COMPLETE (2026-08-02, reframed): `MyProof/HeavisideMass.lean` (120 lines) — the
-Searle energy coefficient (W(β) = W₀·g(β), g the 1897 coefficient) + the equatorial
-density ratio (1−β²)⁻³ + the momentum-direction statement.  The γ = 1/√(1−β²)
-lemmas moved to `HeavisideMovingCharge` as the equatorial-enhancement theorems
-(`enhancement_ge_one`, `enhancement_mono`) — γ is Heaviside's field factor, NOT a
-mass; the γ-mass is Lorentz's deformable electron (1899/1904).
+T8 COMPLETE (2026-08-02, reframed): `MyProof/HeavisideMass.lean` (120 lines, 1 theorem)
+— the Searle/Abraham excess-energy coefficient g(β) and the equatorial density ratio
+(1−β²)⁻³ (the theorem); the γ = 1/√(1−β²) lemmas moved to `HeavisideMovingCharge` as
+the equatorial-enhancement theorems (`enhancement_ge_one`, `enhancement_mono`) — γ is
+Heaviside's field factor, NOT a mass; the γ-mass is Lorentz's deformable electron
+(1899/1904).  The g(0) = 0 identity makes g the EXCESS over the rest energy, and the
+attribution of the g-bracket is contested (Kaufmann's ψ writes it as Abraham's) —
+flagged in the section below.
 T9 COMPLETE (2026-08-02): `MyProof/HeavisideFractional.lean` (290 lines, 6 theorems) —
 the heat kernel ∂G/∂t = D·∂²G/∂x² (fundamental solution), the cable form ∂G/∂t =
 (1/KR)·∂²G/∂x², the unit-step derivative on both half-lines (the impulse is concentrated
@@ -179,7 +181,7 @@ a Dielectric" (Phil. Mag. April 1889). Formula page: EP2 p. 495.
 E(r,θ) = q(1−β²)/(r²(1−β²sin²θ)^{3/2}) along the radial unit vector, H perpendicular).
 Theorems: E·H = 0 (scalar-triple-product — banked in MultipoleSymmetry.lean); the
 flattening factor (1−β²sin²θ)^{−3/2} ≥ 1 with equality iff sin θ = 0 (ellipsoid geometry);
-the equatorial/axial field ratio (1−β²); the cone statement sin θ = v/u with β > 1
+the equatorial/axial field ratio (1−β²)^{−3/2}; the cone statement sin θ = v/u with β > 1
 (geometry: the cone angle exists iff u > v). The derivation from Maxwell (retarded
 potentials) is beyond the pin — premise-structured, exactly like the corpus's
 Neumann–Debye/Hopf treatment.
@@ -242,24 +244,28 @@ ring (with the square-root-of-product identity √a·√b = √(ab) under the br
 a premise or in the argument form), the distortionless specialisation γ = α + jβ with
 α = √(RS), β = ω√(LK) (T1's factorisation in harmonic form).
 
-## T8 — Electromagnetic mass and momentum (1889)
+## T8 — The field energy and momentum of the moving charge (1889/1897)
 
 **Sources:** EP2 "On the Electromagnetic Effects due to the Motion of Electrification
 through a Dielectric" (Phil. Mag. April 1889; EP2 djvu 796, pp. 494–512 area). Adjacent to
 T4 (the same moving-charge field) but a separate claim: the field carries momentum, and
-its energy grows with speed exactly like the kinetic energy of a mass that increases with
-velocity — the first velocity-dependent "electromagnetic mass".
+its energy depends on the speed in a way that behaves like a velocity-dependent mass.
 
-**Statement (Heaviside's form):** for the moving charge, the electromagnetic momentum of the
-field is parallel to the motion and its energy has the form E = (mass)·v²/2-style
-coefficient m(v) = m₀/√(1 − v²/c²)-like (the field mass rises with speed; Heaviside's
-expressions carry the 4/3-type coefficient of the electrostatic energy).
+**Attribution (the framing IS the claim in a transcription dossier):** the γ = 1/√(1−β²)
+that appears in T4 is Heaviside's own 1889 EQUATORIAL FIELD ENHANCEMENT (E = qγ/r² at
+θ = π/2) — a field factor, NOT a mass formula.  The γ-shaped mass is Lorentz's deformable
+electron (1899/1904).  Heaviside's field energy is instead the excess coefficient
+g(β) = (1+β²)/(2β)·ln((1+β)/(1−β)) − 1, with W(β) = W₀·(1 + g(β)) (g(0) = 0, so g is the
+EXCESS over the rest energy W₀, not the total).  Attribution of the g-bracket is
+contested in the secondary literature: Kaufmann's ψ(β) = g(β)/β² writes it as ABRAHAM's,
+introduced precisely as the correction to Searle's field-energy formula — checked against
+the primary sources before the label hardens (see the status block).
 
-**Formalisation plan:** from the T4 field definitions — the field-momentum integral and the
-energy coefficient as definitions; the honest theorems: the momentum is along the motion
-(symmetry — banked MultipoleSymmetry-style argument), the energy coefficient's dependence
-on β = u/v through the factor 1/√(1−β²) (the relativistic factor as a real calculus
-identity), the small-speed limit giving the rest-mass coefficient.
+**Formalised:** `searleCoefficient` (the g-bracket, named with the contestable-attribution
+flag), `movingEnergyRatio` (the excess-energy statement), `equatorial_density_ratio` — the
+(1−β²)⁻³ density concentration from the T4 field (the theorem), and `MomentumAlongMotion`
+(the momentum-direction statement).  The small-speed limit lim g(β)/β² = 4/3 is the
+planned next theorem (the Kaufmann m/m₀ = (3/4)·ψ(β) normalization's exactness at β = 0).
 
 ## T9 — Fractional operators and the impulse function
 
@@ -310,7 +316,7 @@ All nine targets complete as of 2026-08-02.
 
 ## Weight classes and verification gates
 
-**Weight-class tagging** (51 theorems; (a) definition/restatement, (b) algebra/calculus
+**Weight-class tagging** (50 theorems; (a) definition/restatement, (b) algebra/calculus
 identity, (c) derivation from premises):
 
 - **(a) 3** — `unitStep_pos`, `unitStep_neg`, `unitStep_add_neg` (indicator evaluations).
@@ -322,10 +328,10 @@ identity, (c) derivation from premises):
   `impedance_ratio_consistency`, `distortionless_square`, `phase_velocity`;
   T5 `flux_perp_E`, `flux_perp_H`; T8 `equatorial_density_ratio`; T9 `cable_equation`
   (instantiation).
-- **(c) 23** — T1 `telegrapher_second_order_V`, `distortionless_wave_solution`; T2 all six
+- **(c) 22** — T1 `telegrapher_second_order_V`, `distortionless_wave_solution`; T2 all six
   (`current_circuital`, `potential_is_circuital`, `total_current_circuital`,
   `continuity_from_circuital`, `free_wave_equation`, `induction_circuital_of_continuity`);
-  T3 `exp_solves_ode`; T4 `moving_charge_induction_circuital`; T5 `div`, `flux_divergence`,
+  T3 `exp_solves_ode`; T4 `moving_charge_induction_circuital`; T5 `flux_divergence`,
   `poynting_balance`; T6 all five; T9 `heat_kernel_x_deriv`, `heat_kernel_xx_deriv`,
   `heat_kernel_heat_equation`, `deriv_unitStep_pos`, `deriv_unitStep_neg`.
 

@@ -44,7 +44,6 @@ import MyProof.HeavisideFractional
 #print axioms HeavisideLineConstants.impedance_ratio_consistency
 #print axioms HeavisideLineConstants.distortionless_square
 #print axioms HeavisideLineConstants.phase_velocity
-#print axioms HeavisideEnergyFlux.div
 #print axioms HeavisideEnergyFlux.flux_perp_E
 #print axioms HeavisideEnergyFlux.flux_perp_H
 #print axioms HeavisideEnergyFlux.flux_divergence
